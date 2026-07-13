@@ -421,7 +421,14 @@ declare module "bun" {
      * @default true
      */
     // trackUnmanagedFds?: boolean;
-    // resourceLimits?: import("worker_threads").ResourceLimits;
+
+    /**
+     * An optional heap-size limit for the worker's JS engine, in megabytes.
+     * When exceeded, the worker is terminated with an `ERR_WORKER_OUT_OF_MEMORY`
+     * error event. `codeRangeSizeMb` and `stackSizeMb` are accepted for Node.js
+     * compatibility but not enforced.
+     */
+    resourceLimits?: import("node:worker_threads").ResourceLimits;
 
     /**
      * An array of module specifiers to preload in the worker.
