@@ -7,10 +7,10 @@ if (isMainThread) {
 } else {
   console.log(getEnvironmentData("inherited"));
   const { depth } = workerData;
-  // 3 levels, each a sequential full VM boot, are enough to prove the value
-  // survives workers that never call setEnvironmentData. Deeper chains push a
-  // debug+ASAN run past the default test budget for no extra coverage.
-  if (depth + 1 < 3) {
+  // Two levels prove the property (the value reaches a worker whose parent
+  // never called setEnvironmentData); each level is a full sequential JSC
+  // VM boot, so deeper chains only add debug-build time.
+  if (depth + 1 < 2) {
     new Worker(__filename, { workerData: { depth: depth + 1 } });
   }
 }

@@ -22,6 +22,11 @@ import wt, {
   workerData,
 } from "worker_threads";
 
+// Many tests here spawn a bun subprocess that boots a multi-level worker tree,
+// and each nested worker in a debug+ASAN build is a full JSC VM boot; several
+// fixtures exceed 5 s there. Release keeps the default.
+if (isDebug) jest.setTimeout(15_000);
+
 test("support eval in worker", async () => {
   const worker = new Worker(`postMessage(1 + 1)`, {
     eval: true,
@@ -516,7 +521,7 @@ describe("environmentData", () => {
     if (errors.length > 0) throw new Error(errors);
     expect(proc.exitCode).toBe(0);
     const out = await proc.stdout.text();
-    expect(out).toBe("foo\n".repeat(3));
+    expect(out).toBe("foo\n".repeat(2));
   });
 
   test("can be used if parent thread had not imported worker_threads", async () => {
